@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BMERankings</title>
+<style>
+/* Layout: CSRankings look (Bootstrap 3 panels, two 50/50 columns: ranking left, area selection right). Deliberately light-only, like the original. */
+:root {
+  color-scheme: light;
+  --text: #333; --muted: #777; --link: blue; --blue: #337ab7;
+  --info-bg: #d9edf7; --info-fg: #31708f; --info-line: #bce8f1;
+  --stripe: #f5f5f5; --stripe2: #f9f9f9; --hover: #e3f2fd; --rule: #ddd; --navy: #05317c;
+  --c-biomech: #ff7f00; --c-biomat: #4daf4a; --c-devices: #e41a1c; --c-imaging: #377eb8; --c-neural: #984ea3;
+  --c-comp: #1b9e9e; --c-molecular: #a65628; --c-robotics: #d6338a; --c-multi: #666666;
+  --font: Helvetica, Arial, sans-serif;
+}
+html { -webkit-text-size-adjust: 100%; }
+[hidden] { display: none !important; }
+body { background: #fff; color: var(--text); font-family: var(--font); font-size: 14px; line-height: 1.42857143; }
+* { box-sizing: border-box; }
+a { color: var(--link); text-decoration: none; } a:hover { text-decoration: underline; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+input[type=checkbox] { cursor: pointer; margin: 1px 0 0; }
+table { border-collapse: collapse; border-spacing: 0; }
+td, th { padding: 2px 0; vertical-align: top; }
+th { text-align: left; }
+abbr[title] { cursor: help; border-bottom: 1px dotted var(--muted); text-decoration: none; }
+
+.container { margin: 0 auto; max-width: 1170px; padding-block: 0 20px; padding-left: max(15px, env(safe-area-inset-left, 0px)); padding-right: max(15px, env(safe-area-inset-right, 0px)); }
+h1 { font-size: 36px; font-weight: 500; line-height: 1.1; margin: 40px 0 20px; }
+@media (max-width: 600px) { h1 { font-size: 26px; margin-top: 24px; } }
+
+.panel-heading { background: var(--info-bg); color: var(--info-fg); border: 1px solid var(--info-line); padding: 10px 15px; }
+.intro-panel { border-radius: 4px 4px 0 0; border-bottom: 0; padding-bottom: 5px; }
+.intro-panel p { margin: 0; }
+.rank-controls-sticky { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 100; background: #fff; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 101; background: #fff; }
+.rank-controls { border-top: 0; border-radius: 0 0 4px 4px; margin-bottom: 20px; box-shadow: 0 1px 1px rgba(0,0,0,.05); }
+.rank-controls-flex { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.rank-controls-main { flex: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+/* region dropdown */
+.region-dd { position: relative; display: inline-block; min-width: 150px; }
+.region-selected { display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: #fff; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; font: inherit; color: var(--text); width: 100%; text-align: left; }
+.region-selected:hover { border-color: var(--blue); }
+.region-selected img, .region-option img { width: 16px; height: auto; flex-shrink: 0; }
+.region-arrow { margin-left: auto; font-size: 10px; color: #666; }
+.region-options { position: absolute; top: 100%; left: 0; min-width: 210px; max-height: 300px; overflow-y: auto; background: #fff; border: 1px solid #ccc; border-top: 0; border-radius: 0 0 4px 4px; box-shadow: 0 4px 8px rgba(0,0,0,.15); z-index: 1000; }
+.region-group { padding: 4px 8px; font-size: 11px; font-weight: 600; color: #666; background: var(--stripe); border-top: 1px solid #eee; }
+.region-option { display: flex; align-items: center; gap: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; color: var(--text); }
+.region-option:hover { background: var(--hover); }
+.region-option.selected { background: var(--info-bg); }
+.region-option .globe { width: 16px; text-align: center; color: #666; font-size: 12px; }
+
+/* year slider */
+.year-slider-container { display: inline-flex; align-items: center; gap: 6px; }
+.year-display { font-weight: bold; font-size: 1.1em; min-width: 48px; text-align: center; color: var(--blue); background: var(--info-bg); padding: 2px 6px; border-radius: 3px; border: 1px solid var(--info-line); font-variant-numeric: tabular-nums; }
+.year-slider { position: relative; width: 110px; height: 17px; margin: 0 6px; }
+.year-slider .track { position: absolute; left: 0; right: 0; top: 4px; height: 8px; background: #fafafa; border: 1px solid #d3d3d3; border-radius: 4px; box-shadow: inset 0 1px 1px #f0f0f0; }
+.year-slider .connect { position: absolute; top: 4px; height: 8px; background: var(--blue); }
+.year-slider input[type=range] { position: absolute; inset: 0; width: 100%; height: 17px; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; }
+.year-slider input[type=range]::-webkit-slider-runnable-track { background: none; height: 17px; }
+.year-slider input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; pointer-events: auto; width: 5px; height: 17px; background: #000; border: 0; border-radius: 0; cursor: ew-resize; }
+.year-slider input[type=range]::-moz-range-track { background: none; }
+.year-slider input[type=range]::-moz-range-thumb { pointer-events: auto; width: 5px; height: 17px; background: #000; border: 0; border-radius: 0; cursor: ew-resize; }
+
+/* area indicators + all toggle */
+.area-indicators { display: inline-flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+.area-indicator, .area-toggle-btn, .area-pill-btn { color: #fff; font-weight: 600; cursor: pointer; user-select: none; border: 0; font-family: inherit; transition: opacity .2s, filter .15s, transform .1s; }
+.area-indicator { padding: 2px 6px; border-radius: 3px; font-size: 11px; }
+.area-indicator:hover, .area-toggle-btn:hover, .area-pill-btn:hover { filter: brightness(1.15); transform: translateY(-1px); }
+.sel-none { opacity: .3; } .sel-partial { opacity: .65; } .sel-all { opacity: 1; }
+.all-toggle { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; margin-right: 10px; }
+.all-toggle input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.all-toggle .slider { position: relative; width: 32px; height: 18px; background: #ccc; border-radius: 18px; transition: background-color .2s; }
+.all-toggle .slider::before { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: transform .2s; }
+.all-toggle input:checked + .slider { background: var(--navy); }
+.all-toggle input:checked + .slider::before { transform: translateX(14px); }
+.all-toggle.partial .slider { background: #6889a8; }
+.all-toggle.partial .slider::before { transform: translateX(7px); }
+.all-toggle input:focus-visible + .slider { outline: 2px solid var(--blue); outline-offset: 2px; }
+.all-toggle .lbl { font-size: 11px; font-weight: 600; color: var(--text); }
+.all-toggle.big .slider { width: 40px; height: 22px; }
+.all-toggle.big .slider::before { top: 3px; left: 3px; width: 16px; height: 16px; }
+.all-toggle.big input:checked + .slider::before { transform: translateX(18px); }
+.all-toggle.big.partial .slider::before { transform: translateX(9px); }
+.all-toggle.big .lbl { font-size: 14px; }
+
+/* two columns */
+.row { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 30px; align-items: stretch; }
+@media (max-width: 767px) { .row { grid-template-columns: minmax(0, 1fr); } }
+.col { min-width: 0; text-align: center; }
+
+/* ranking table */
+#success { overflow: auto; max-height: 800px; display: inline-block; text-align: left; max-width: 100%; }
+@media (max-width: 767px) { #success { max-height: none; } }
+table.table-fit { white-space: nowrap; font-variant-numeric: tabular-nums; }
+table.table-fit > thead > tr > th { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 2px solid var(--rule); padding: 8px 0; font-weight: bold; color: var(--muted); }
+table.table-fit > thead > tr > th.r { text-align: right; padding-left: 12px; }
+table.table-fit > tbody > tr.inst > td { padding: 4px 0; }
+table.table-fit > tbody > tr.inst.z > td { background: var(--stripe); }
+table.table-fit > tbody > tr.inst:hover > td { background: var(--hover); }
+table.table-fit td.r { text-align: right; padding-left: 12px; }
+.rank-cell { width: 2.5em; min-width: 2.5em; text-align: right; padding-right: 8px !important; }
+.hovertip { cursor: pointer; color: var(--link); background: none; border: 0; padding: 0; font: inherit; }
+.iname { cursor: pointer; }
+.flag { vertical-align: middle; width: 16px; height: auto; }
+.charticon { vertical-align: middle; }
+tr.sub > td { padding: 0 !important; }
+.csr-chart { padding: 6px 0 8px 2.5em; }
+.csr-chart svg text { font-family: var(--font); fill: #333; }
+
+/* faculty table */
+.fac { margin: 2px 0 8px; white-space: nowrap; }
+.fac thead td, .fac thead th { padding: 2px 4px; }
+.fac tbody tr.f:nth-of-type(4n+1) td { background: var(--stripe); }
+.fac tbody tr.f:hover td { background: var(--hover); }
+.fac td { padding: 1px 4px; }
+.fac td.r { text-align: right; }
+.areaname { font-variant: small-caps; color: var(--text); }
+.ico { display: inline-block; vertical-align: -1px; }
+.more { font-size: 12px; color: var(--muted); padding: 2px 4px 8px; }
+
+/* area selection panel */
+#areas { display: inline-block; text-align: left; width: 100%; max-width: 440px; }
+#areas table { width: 100%; }
+#areas thead th { padding: 6px 0 4px; }
+.all-areas-header { display: flex; align-items: center; font-size: 125%; margin-bottom: 8px; }
+.area-toggle-btn { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 12px; vertical-align: middle; margin-top: 8px; }
+#areas tbody > tr.area:nth-of-type(odd) > td { background: var(--stripe2); }
+#areas tbody > tr.area > td { padding: 2px 0; }
+#areas td.cb { width: 40px; text-align: center; }
+.venues { display: block; padding: 4px 0 4px 18px; }
+.venues .org { font-variant: small-caps; color: var(--muted); margin: 0 0 4px; }
+.venues table td { padding: 1px 0; }
+.venues table td.cb { width: 40px; text-align: right; padding-right: 0; }
+.venues label { color: var(--link); cursor: pointer; }
+
+.no-areas { text-align: center; padding: 40px 20px; max-width: 500px; margin: 0 auto; white-space: normal; }
+.no-areas p { font-size: 16px; color: #555; margin: 0 0 20px; line-height: 1.6; }
+.no-areas .pills { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.area-pill-btn { padding: 6px 14px; border-radius: 4px; font-size: 13px; }
+.btn-select-all { padding: 10px 24px; font: 600 14px var(--font); color: #fff; background: var(--navy); border: 0; border-radius: 4px; cursor: pointer; }
+.btn-select-all:hover { filter: brightness(1.2); }
+
+.dagger-note { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
+.grpdesc { display: block; font-variant: small-caps; font-weight: normal; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+#areas tbody > tr.area.empty > td { color: #aaa; }
+#areas tr.area.empty .nojs { font-size: 11px; font-style: italic; }
+.tri-space { display: inline-block; width: 0.9em; }
+.pending { margin: 6px auto; max-width: 90ch; font-size: .85em; color: var(--muted); }
+.pending summary { cursor: pointer; color: var(--link); }
+.page-footer { margin-top: 2em; padding: 1em 0; border-top: 1px solid var(--rule); text-align: center; }
+.page-footer p { margin: 0 0 .5em; }
+.page-footer .text-muted { color: var(--muted); font-size: .85em; max-width: 90ch; margin-left: auto; margin-right: auto; }
+#status { padding: 30px 0; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>BMERankings: Biomedical Engineering Rankings</h1>
+  <div class="panel-heading intro-panel">
+    <p>BMERankings is a metrics-based ranking of top biomedical engineering institutions based on author publications in selective journals.</p>
+  </div>
+  <div class="rank-controls-sticky">
+    <div class="panel-heading rank-controls">
+      <div class="rank-controls-flex">
+        <div class="rank-controls-main">
+          <div class="region-dd" id="region-dd">
+            <button type="button" class="region-selected" id="region-btn" aria-haspopup="listbox" aria-expanded="false" title="Filter by country, region, or continent">
+              <img id="region-flag" src="flags/us.png" alt=""><span id="region-text">USA</span><span class="region-arrow">&#9662;</span>
+            </button>
+            <div class="region-options" id="region-options" role="listbox" hidden></div>
+          </div>
+          <span class="year-slider-container" title="Filter by publication year range">
+            <span class="year-display" id="year-from">2016</span>
+            <span class="year-slider">
+              <span class="track"></span><span class="connect" id="year-connect"></span>
+              <input type="range" id="y0" aria-label="Start year">
+              <input type="range" id="y1" aria-label="End year">
+            </span>
+            <span class="year-display" id="year-to">2025</span>
+          </span>
+          <span class="area-indicators" title="Area selection status">
+            <label class="all-toggle" id="all-top"><input type="checkbox" id="all-top-cb" checked><span class="slider"></span><span class="lbl">All</span></label>
+            <span id="indicators"></span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div id="success">
+        <table class="table-fit" id="rank">
+          <thead><tr><th></th><th>Institution</th><th class="r"><abbr title="Geometric mean count of papers published across all areas.">Count</abbr></th><th class="r">&nbsp;<abbr title="Number of authors with at least 1.0 adjusted publication in these areas.">Authors</abbr></th></tr></thead>
+          <tbody id="rows"><tr><td colspan="4" id="status">Loading publication data…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col">
+      <div id="areas">
+        <table>
+          <thead><tr><th colspan="2"><span class="all-areas-header"><label class="all-toggle big" id="all-side"><input type="checkbox" id="all-side-cb" checked><span class="slider"></span><span class="lbl">All Areas</span></label></span></th></tr></thead>
+        </table>
+        <div id="area-groups"></div>
+        <p class="dagger-note">&dagger; General-scope journal: only papers with at least one author in a biomedical engineering or bioengineering department count.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <p>Publication data from <a href="https://openalex.org/" target="_blank" rel="noopener">OpenAlex</a> (November 2026) · <span id="njournals">76</span> journals · 8 categories · 2016–2026 (2026 is partial)</p>
+    <p class="text-muted">Each paper's credit is split evenly among its authors and counted toward the university listed on the paper. Institutions are ranked by the geometric mean of (adjusted count + 1) across the selected areas. Hospitals, companies and non-university institutes get no credit, and medical schools count toward their parent university. There is no hand-curated faculty list, so author lists include students and postdocs, and OpenAlex's automatic author matching can split or merge people.</p>
+    <div id="pending"></div>
+    <p class="text-muted">Layout modeled on <a href="https://csrankings.org/" target="_blank" rel="noopener">CSRankings</a> by Emery Berger. Not affiliated with CSRankings. Flags from <a href="https://flagcdn.com/" target="_blank" rel="noopener">flagcdn</a>.</p>
+  </div>
+</div>
+
+<script>
+const CONTINENTS = {
+  northamerica: ["US", "CA", "MX", "PR"],
+  southamerica: "AR BR CL CO EC PE UY VE".split(" "),
+  europe: "AT BE BG HR CY CZ DK EE FI FR DE GR HU IS IE IT LV LT LU MT NL NO PL PT RO RS RU SK SI ES SE CH GB UA TR".split(" "),
+  asia: "BD BN CN HK IN ID IR IL JO JP KZ KR LB LK MO MY PK PH QA SA SG TW TH AE VN".split(" "),
+  australasia: ["AU", "NZ"],
+  africa: "EG MA NG ZA TN KE GH RE".split(" ")
+};
+const CONT_LABEL = { northamerica: "North America", southamerica: "South America", africa: "Africa", asia: "Asia", australasia: "Australasia", europe: "Europe", world: "the world" };
+const regionName = (() => { try { const d = new Intl.DisplayNames(["en"], { type: "region" }); return cc => cc === "US" ? "USA" : (d.of(cc) || cc); } catch (e) { return cc => cc; } })();
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const $ = s => document.querySelector(s);
+const MIN_TO_RANK = 99;
+let META, INSTS, BY_INST = new Map(), VSEL = [], region = "us", openFac = new Set(), openChart = new Set(), RANKED = new Map();
+
+function store(k, v) { try { localStorage.setItem("bmer2:" + k, JSON.stringify(v)); } catch (e) {} }
+function recall(k, d) { try { const v = localStorage.getItem("bmer2:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
+const gcolor = g => `var(--c-${g})`;
+const areaGroup = a => META.areas[a].group;
+
+const CHART_ICON = `<svg class="charticon" width="14" height="12" viewBox="0 0 14 12" aria-hidden="true"><rect x="1" y="6" width="3" height="6" fill="#377eb8"/><rect x="5.5" y="2" width="3" height="10" fill="#ff7f00"/><rect x="10" y="4" width="3" height="8" fill="#4daf4a"/></svg>`;
+const CHART_ICON_OPEN = `<svg class="charticon" width="14" height="12" viewBox="0 0 14 12" aria-hidden="true"><rect x="1" y="6" width="3" height="6" fill="#999"/><rect x="5.5" y="2" width="3" height="10" fill="#999"/><rect x="10" y="4" width="3" height="8" fill="#999"/></svg>`;
+const OA_ICON = `<svg class="ico" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><circle cx="5.5" cy="5.5" r="4.5" fill="none" stroke="#c0392b" stroke-width="1.6"/><circle cx="5.5" cy="5.5" r="1.6" fill="#c0392b"/></svg>`;
+const SCHOLAR_ICON = `<svg class="ico" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><path d="M5.5 0.5 0 4.5h11z" fill="#4285f4"/><circle cx="5.5" cy="7.3" r="3.2" fill="#356ac3"/></svg>`;
+
+/* ---------- controls ---------- */
+function buildRegion() {
+  const ccs = [...new Set(INSTS.map(i => i[1]).filter(Boolean))].sort((a, b) => regionName(a).localeCompare(regionName(b)));
+  const opt = (v, label, icon) => `<div class="region-option" role="option" tabindex="-1" data-v="${v}">${icon}<span>${esc(label)}</span></div>`;
+  $("#region-options").innerHTML =
+    `<div class="region-group">by country/region</div>` +
+    ccs.map(cc => opt(cc.toLowerCase(), regionName(cc), `<img src="flags/${cc.toLowerCase()}.png" alt="">`)).join("") +
+    `<div class="region-group">by continent</div>` +
+    Object.keys(CONT_LABEL).map(k => opt(k, CONT_LABEL[k], `<span class="globe">${k === "world" ? "◎" : "○"}</span>`)).join("");
+  const btn = $("#region-btn"), box = $("#region-options");
+  const close = () => { box.hidden = true; btn.setAttribute("aria-expanded", "false"); };
+  btn.addEventListener("click", e => { e.stopPropagation(); box.hidden = !box.hidden; btn.setAttribute("aria-expanded", String(!box.hidden)); });
+  box.addEventListener("click", e => { const o = e.target.closest(".region-option"); if (!o) return; setRegion(o.dataset.v); close(); rank(); });
+  document.addEventListener("click", e => { if (!e.target.closest("#region-dd")) close(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+}
+function setRegion(v) {
+  region = v;
+  const isCont = v in CONT_LABEL;
+  $("#region-text").textContent = isCont ? CONT_LABEL[v] : regionName(v.toUpperCase());
+  const f = $("#region-flag");
+  f.hidden = isCont; if (!isCont) f.src = `flags/${v}.png`;
+  document.querySelectorAll(".region-option").forEach(o => o.classList.toggle("selected", o.dataset.v === v));
+  store("region", v);
+}
+
+function buildYears() {
+  const Y = META.years, a = $("#y0"), b = $("#y1");
+  for (const r of [a, b]) { r.min = Y[0]; r.max = Y[Y.length - 1]; r.step = 1; }
+  a.value = recall("from", 2016); b.value = recall("to", 2025);
+  const sync = (which) => {
+    if (+a.value > +b.value) { if (which === a) b.value = a.value; else a.value = b.value; }
+    $("#year-from").textContent = a.value; $("#year-to").textContent = b.value;
+    const span = Y[Y.length - 1] - Y[0];
+    const l = (a.value - Y[0]) / span, r = (b.value - Y[0]) / span;
+    const c = $("#year-connect"); c.style.left = `calc(${l * 100}% + ${2.5 - 5 * l}px)`; c.style.width = `calc(${(r - l) * 100}% - ${5 * (r - l)}px)`;
+  };
+  a.addEventListener("input", () => { sync(a); rank(); }); b.addEventListener("input", () => { sync(b); rank(); });
+  sync(a);
+}
+
+function buildAreas() {
+  const G = META.groups;
+  $("#indicators").innerHTML = G.map(g => `<button type="button" class="area-indicator" data-g="${g.key}" style="background:${gcolor(g.key)}" title="${esc(g.label)} areas: click to toggle">${esc(g.short)}</button>`).join(" ");
+  $("#area-groups").innerHTML = G.map(g => `
+    <table>
+      <thead><tr><th colspan="2"><button type="button" class="area-toggle-btn" data-g="${g.key}" style="background:${gcolor(g.key)}" title="Click to toggle ${esc(g.label)} areas">${esc(g.label)}</button><span class="grpdesc">${esc(g.desc)}</span></th></tr></thead>
+      <tbody style="color:${gcolor(g.key)}">
+      ${META.areas.map((a, ai) => a.group !== g.key ? "" : !META.venues.some(v => v.area === ai) ? "" : `
+        <tr class="area"><td>
+          <button type="button" class="hovertip" data-expand="${ai}" aria-expanded="false" title="Click to show/hide journals">&#9658;</button>
+          <label for="area-${a.key}">${esc(a.name)}</label>
+          <div class="venues" id="venues-${ai}" hidden>
+            <table style="width:100%">${META.venues.map((v, vi) => v.area !== ai ? "" : `
+              <tr><td><label for="v-${vi}" title="${esc(v.full)}${v.f ? " (only papers with a BME or bioengineering department author)" : ""}">${esc(v.name)}${v.f ? "&nbsp;&dagger;" : ""}</label></td><td class="cb"><input type="checkbox" id="v-${vi}" data-v="${vi}"></td></tr>`).join("")}
+            </table>
+          </div>
+        </td><td class="cb"><input type="checkbox" class="parent" id="area-${a.key}" data-a="${ai}"></td></tr>`).join("")}
+      </tbody>
+    </table>`).join("");
+
+  const setV = (pred, on) => { META.venues.forEach((v, vi) => { if (pred(v, vi)) VSEL[vi] = on; }); };
+  const groupState = g => { const vs = META.venues.filter(v => areaGroup(v.area) === g).map(v => VSEL[META.venues.indexOf(v)]); return !vs.length ? "none" : vs.every(Boolean) ? "all" : vs.some(Boolean) ? "partial" : "none"; };
+  document.addEventListener("click", e => {
+    const t = e.target.closest("[data-g]");
+    if (t) { const g = t.dataset.g; setV(v => areaGroup(v.area) === g, groupState(g) !== "all"); syncAreas(); rank(); return; }
+    const x = e.target.closest("[data-expand]");
+    if (x) { const box = $("#venues-" + x.dataset.expand); box.hidden = !box.hidden; x.innerHTML = box.hidden ? "&#9658;" : "&#9660;"; x.setAttribute("aria-expanded", String(!box.hidden)); }
+  });
+  document.addEventListener("change", e => {
+    const t = e.target;
+    if (t.matches("input.parent")) { setV(v => v.area === +t.dataset.a, t.checked); }
+    else if (t.matches("input[data-v]")) { VSEL[+t.dataset.v] = t.checked; }
+    else if (t.id === "all-top-cb" || t.id === "all-side-cb") { setV(() => true, !VSEL.every(Boolean)); }
+    else return;
+    syncAreas(); rank();
+  });
+  window.groupState = groupState;
+}
+function syncAreas() {
+  META.venues.forEach((v, vi) => { const c = $("#v-" + vi); if (c) c.checked = !!VSEL[vi]; });
+  META.areas.forEach((a, ai) => {
+    const vs = META.venues.map((v, vi) => v.area === ai ? VSEL[vi] : null).filter(x => x !== null);
+    const c = $("#area-" + a.key); if (!c) return; c.checked = vs.every(Boolean); c.indeterminate = !c.checked && vs.some(Boolean);
+  });
+  for (const el of document.querySelectorAll(".area-indicator, .area-toggle-btn")) {
+    el.classList.remove("sel-none", "sel-partial", "sel-all"); el.classList.add("sel-" + groupState(el.dataset.g));
+  }
+  const all = VSEL.every(Boolean), some = VSEL.some(Boolean);
+  for (const id of ["all-top", "all-side"]) { $("#" + id + "-cb").checked = all; $("#" + id).classList.toggle("partial", !all && some); }
+  store("venues", VSEL);
+}
+
+/* ---------- ranking ---------- */
+function selection() {
+  const Y = META.years;
+  return { y0: Y.indexOf(+$("#y0").value), y1: Y.indexOf(+$("#y1").value),
+    areas: META.areas.map((_, ai) => META.venues.some((v, vi) => v.area === ai && VSEL[vi])).map((on, ai) => on ? ai : -1).filter(a => a >= 0) };
+}
+function regionAllows(cc) {
+  if (region === "world") return true;
+  if (region in CONTINENTS) return CONTINENTS[region].includes(cc);
+  return cc === region.toUpperCase();
+}
+function authorStats(au, s) {
+  let adj = 0, raw = 0; const per = {};
+  for (const [v, y, c, x] of au[3]) if (VSEL[v] && y >= s.y0 && y <= s.y1) { adj += x; raw += c; const a = META.venues[v].area; per[a] = (per[a] || 0) + x; }
+  return { adj, raw, per };
+}
+function rank() {
+  store("from", +$("#y0").value); store("to", +$("#y1").value);
+  const s = selection();
+  if (!s.areas.length) {
+    $("#rows").innerHTML = `<tr><td colspan="4"><div class="no-areas"><p><strong>No areas selected.</strong> Click an area to select it.</p>
+      <div class="pills">${META.groups.map(g => `<button type="button" class="area-pill-btn" data-g="${g.key}" style="background:${gcolor(g.key)}">${esc(g.short)}</button>`).join("")}</div>
+      <button type="button" class="btn-select-all" id="select-all">Select All Areas</button></div></td></tr>`;
+    $("#select-all").onclick = () => { VSEL = VSEL.map(() => true); syncAreas(); rank(); };
+    return;
+  }
+  const out = [];
+  for (let i = 0; i < INSTS.length; i++) {
+    const [name, cc, , entries] = INSTS[i];
+    if (!regionAllows(cc)) continue;
+    const by = new Array(META.areas.length).fill(0);
+    for (const [v, y, x] of entries) if (VSEL[v] && y >= s.y0 && y <= s.y1) by[META.venues[v].area] += x;
+    let ls = 0; for (const a of s.areas) ls += Math.log(by[a] + 1);
+    const score = Math.round(10 * Math.exp(ls / s.areas.length)) / 10;
+    if (score <= 1.0) continue;
+    let n = 0; for (const au of BY_INST.get(i) || []) if (authorStats(au, s).adj >= 1) n++;
+    out.push({ i, name, cc, score, n, by });
+  }
+  out.sort((a, b) => b.score - a.score || b.n - a.n || a.name.localeCompare(b.name));
+  let html = "", r = 0, ties = 1, old = null, k = 0;
+  RANKED = new Map();
+  for (const x of out) {
+    if (k >= MIN_TO_RANK && x.score !== old) break;
+    if (x.score !== old) { r += ties; ties = 0; }
+    ties++; old = x.score;
+    RANKED.set(x.i, x);
+    const fo = openFac.has(x.i), co = openChart.has(x.i), cc = (x.cc || "").toLowerCase();
+    html += `<tr class="inst${k % 2 === 0 ? " z" : ""}" data-i="${x.i}"><td class="rank-cell">${r}</td>
+      <td><button type="button" class="hovertip" data-fac="${x.i}" aria-expanded="${fo}" title="Click to show/hide authors">${fo ? "&#9660;" : "&#9658;"}</button>&nbsp;<span class="iname" data-fac="${x.i}" title="Click to show/hide authors">${esc(x.name)}</span>&nbsp;${cc ? `<img class="flag" title="${esc(regionName(x.cc))}" alt="${esc(regionName(x.cc))}" src="flags/${cc}.png">` : ""}&nbsp;<button type="button" class="hovertip" data-chart="${x.i}" title="Click for publication distribution">${co ? CHART_ICON_OPEN : CHART_ICON}</button></td>
+      <td class="r">${x.score.toFixed(1)}</td><td class="r">${x.n}</td></tr>
+      <tr class="sub"><td colspan="4"><div class="csr-chart" id="chart-${x.i}" ${co ? "" : "hidden"}>${co ? chart(x.by, s) : ""}</div></td></tr>
+      <tr class="sub"><td colspan="4"><div id="fac-${x.i}" ${fo ? "" : "hidden"}>${fo ? faculty(x.i, s) : ""}</div></td></tr>`;
+    k++;
+  }
+  $("#rows").innerHTML = html || `<tr><td colspan="4" id="status">No institutions in this region have publications in the selected areas and years.</td></tr>`;
+}
+
+function chart(by, s) {
+  const areas = s.areas, W = Math.max(420, 30 + areas.length * 18), H = 80, L = 30, B = 150, bw = (W - L) / areas.length;
+  const max = Math.max(...areas.map(a => by[a]), 1);
+  const step = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000].find(st => max / st <= 4) || 1000;
+  let g = "";
+  for (let t = 0; t <= max; t += step) { const y = 3 + H - (t / max) * H; g += `<line x1="${L}" x2="${W}" y1="${y}" y2="${y}" stroke="#ddd" stroke-width="1"/><text x="${L - 4}" y="${y + 3}" font-size="9" text-anchor="end">${t}</text>`; }
+  areas.forEach((a, j) => {
+    const h = (by[a] / max) * H, x = L + j * bw + 1;
+    g += `<rect x="${x}" y="${3 + H - h}" width="${bw - 2}" height="${h}" fill="${gcolor(areaGroup(a))}"><title>${esc(META.areas[a].name)}: ${by[a].toFixed(1)}</title></rect>`;
+    g += `<text transform="translate(${x + bw / 2 + 3},${H + 8}) rotate(-90)" font-size="9" text-anchor="end">${esc(META.areas[a].name)}</text>`;
+  });
+  g += `<line x1="${L}" x2="${L}" y1="3" y2="${H + 3}" stroke="#888"/><line x1="${L}" x2="${W}" y1="${H + 3}" y2="${H + 3}" stroke="#888"/>`;
+  return `<svg width="${W}" height="${H + B}" viewBox="0 0 ${W} ${H + B}" style="max-width:100%;height:auto" role="img" aria-label="Adjusted publications by area">${g}</svg>`;
+}
+
+function faculty(i, s) {
+  const rows = (BY_INST.get(i) || []).map(au => ({ name: au[0], id: au[2], ...authorStats(au, s) }))
+    .filter(a => a.adj >= 1).sort((a, b) => b.raw - a.raw || b.adj - a.adj || a.name.localeCompare(b.name));
+  if (!rows.length) return `<div class="more">No author reaches 1.0 adjusted publication in this selection.</div>`;
+  const shown = rows.slice(0, 60);
+  return `<table class="fac"><thead><tr><th></th><td><small><em><abbr title="Click on an author's name to go to their OpenAlex profile.">Author</abbr></em></small></td>
+    <td class="r"><small><em>&nbsp;&nbsp;<abbr title="Total number of publications in the selected journals.">#&nbsp;Pubs</abbr></em></small></td>
+    <td class="r"><small><em><abbr title="Count divided by number of co-authors">Adj.&nbsp;#</abbr></em></small></td></tr></thead><tbody>
+    ${shown.map(a => {
+      const oa = `https://openalex.org/${a.id}`, gs = `https://scholar.google.com/scholar?q=${encodeURIComponent('"' + a.name + '"')}`;
+      return `<tr class="f"><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><small><a href="${oa}" target="_blank" rel="noopener" title="Click for author's OpenAlex profile.">${esc(a.name)}</a>&nbsp;<a href="${oa}" target="_blank" rel="noopener" title="OpenAlex profile">${OA_ICON}</a>&nbsp;<a href="${gs}" target="_blank" rel="noopener" title="Search Google Scholar">${SCHOLAR_ICON}</a></small></td>
+        <td class="r"><small><a href="${oa}" target="_blank" rel="noopener">${a.raw}</a></small></td><td class="r"><small>${a.adj.toFixed(1)}</small></td></tr><tr><td colspan="4"></td></tr>`;
+    }).join("")}</tbody></table>${rows.length > shown.length ? `<div class="more">Showing the top 60 of ${rows.length} authors.</div>` : ""}`;
+}
+
+document.addEventListener("click", e => {
+  const f = e.target.closest("[data-fac]"), c = e.target.closest("[data-chart]");
+  if (!f && !c) return;
+  const i = +(f || c).dataset[f ? "fac" : "chart"], x = RANKED.get(i), s = selection();
+  if (f) {
+    const box = $("#fac-" + i), btn = document.querySelector(`button[data-fac="${i}"]`);
+    if (openFac.has(i)) { openFac.delete(i); box.hidden = true; } else { openFac.add(i); box.innerHTML = faculty(i, s); box.hidden = false; }
+    btn.innerHTML = openFac.has(i) ? "&#9660;" : "&#9658;"; btn.setAttribute("aria-expanded", String(openFac.has(i)));
+  } else {
+    const box = $("#chart-" + i);
+    if (openChart.has(i)) { openChart.delete(i); box.hidden = true; } else { openChart.add(i); box.innerHTML = chart(x.by, s); box.hidden = false; }
+    c.innerHTML = openChart.has(i) ? CHART_ICON_OPEN : CHART_ICON;
+  }
+});
+
+Promise.all([fetch("institutions.json").then(r => r.json()), fetch("authors.json").then(r => r.json())]).then(([I, A]) => {
+  META = I.meta; INSTS = I.insts;
+  $("#njournals").textContent = META.venues.length;
+  $("#pending").innerHTML = (META.pending.length ? `<details class="pending"><summary>${META.pending.length} journals from the list aren't included yet (data still being collected)</summary><p>${META.pending.map(esc).join(" · ")}</p></details>` : "")
+    + (META.extra.length ? `<p class="pending">Also included though not on the original list: ${META.extra.map(esc).join(", ")}.</p>` : "");
+  for (const a of A) { if (!BY_INST.has(a[1])) BY_INST.set(a[1], []); BY_INST.get(a[1]).push(a); }
+  const saved = recall("venues", null);
+  VSEL = META.venues.map((_, vi) => saved && saved.length === META.venues.length ? !!saved[vi] : true);
+  buildRegion(); setRegion(recall("region", "us")); buildYears(); buildAreas(); syncAreas(); rank();
+}).catch(() => { $("#status").textContent = "The publication data didn't load. Reload the page to try again."; });
+</script>
+
+</body>
+</html>

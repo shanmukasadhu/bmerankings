@@ -1,0 +1,5 @@
+raw/
+*.json.gz
+.env
+.DS_Store
+__pycache__/

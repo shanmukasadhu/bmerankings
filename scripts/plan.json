@@ -1,0 +1,572 @@
+{
+"plan": [
+[
+"S106963461",
+"Nature Biotechnology",
+true
+],
+[
+"S4387286573",
+"Nature Reviews Bioengineering",
+false
+],
+[
+"S171268996",
+"Annual Review of Biomedical Engineering",
+false
+],
+[
+"S203619773",
+"IEEE Reviews in Biomedical Engineering",
+false
+],
+[
+"S24207032",
+"Science Translational Medicine",
+true
+],
+[
+"S2737737698",
+"Advanced Science",
+true
+],
+[
+"S99352657",
+"Advanced Materials",
+true
+],
+[
+"S2500736452",
+"Advanced Healthcare Materials",
+false
+],
+[
+"S2898508902",
+"Bioactive Materials",
+false
+],
+[
+"S4210219546",
+"Materials Today Bio",
+false
+],
+[
+"S19081469",
+"Tissue Engineering Part A",
+false
+],
+[
+"S13647896",
+"Tissue Engineering Part B: Reviews",
+false
+],
+[
+"S190192123",
+"Tissue Engineering Part C: Methods",
+false
+],
+[
+"S2737714521",
+"Biomaterials Research",
+false
+],
+[
+"S184573928",
+"Journal of Biomedical Materials Research Part A",
+false
+],
+[
+"S2494179437",
+"Biomaterials Science",
+false
+],
+[
+"S135204980",
+"Advanced Functional Materials",
+true
+],
+[
+"S2735234564",
+"Regenerative Biomaterials",
+false
+],
+[
+"S4210187999",
+"Journal of Biomechanical Engineering",
+false
+],
+[
+"S72888871",
+"Computer Methods in Biomechanics and Biomedical Engineering",
+false
+],
+[
+"S177373469",
+"International Journal for Numerical Methods in Biomedical Engineering",
+false
+],
+[
+"S52939411",
+"Medical Engineering & Physics",
+false
+],
+[
+"S100249163",
+"Journal of the Mechanical Behavior of Biomedical Materials",
+false
+],
+[
+"S198823948",
+"Computerized Medical Imaging and Graphics",
+false
+],
+[
+"S2765007747",
+"Journal of Medical Imaging",
+false
+],
+[
+"S138959710",
+"Computer Methods and Programs in Biomedicine",
+true
+],
+[
+"S4210231342",
+"IEEE Transactions on Radiation and Plasma Medical Sciences",
+false
+],
+[
+"S111160002",
+"Magnetic Resonance in Medicine",
+false
+],
+[
+"S45012897",
+"NMR in Biomedicine",
+false
+],
+[
+"S2898295080",
+"Photoacoustics",
+false
+],
+[
+"S44278595",
+"Computers in Biology and Medicine",
+true
+],
+[
+"S8427965",
+"Biomedical Signal Processing and Control",
+true
+],
+[
+"S80299757",
+"IEEE Transactions on Biomedical Circuits and Systems",
+false
+],
+[
+"S36029991",
+"IEEE/ACM Transactions on Computational Biology and Bioinformatics",
+true
+],
+[
+"S52395412",
+"Bioinformatics",
+true
+],
+[
+"S91767247",
+"Briefings in Bioinformatics",
+true
+],
+[
+"S4210198061",
+"Patterns",
+true
+],
+[
+"S86033158",
+"PLoS Computational Biology",
+true
+],
+[
+"S3164724",
+"Physiological Measurement",
+false
+],
+[
+"S162176842",
+"BioMedical Engineering OnLine",
+false
+],
+[
+"S2485537415",
+"IEEE Access",
+true
+],
+[
+"S2299478",
+"Journal of NeuroEngineering and Rehabilitation",
+false
+],
+[
+"S46300952",
+"Medical & Biological Engineering & Computing",
+false
+],
+[
+"S144620930",
+"IEEE Transactions on Robotics",
+true
+],
+[
+"S4210230830",
+"Journal of Rehabilitation and Assistive Technologies Engineering",
+false
+],
+[
+"S4210209220",
+"Cyborg and Bionic Systems",
+false
+],
+[
+"S133768115",
+"Robotics and Autonomous Systems",
+true
+],
+[
+"S127827428",
+"Nature Methods",
+true
+],
+[
+"S64187185",
+"Nature Communications",
+true
+],
+[
+"S2737427234",
+"Science Advances",
+true
+],
+[
+"S125754415",
+"Proceedings of the National Academy of Sciences",
+true
+],
+[
+"S5407047401",
+"Cell Biomaterials",
+false
+],
+[
+"S4210212656",
+"Bioengineering & Translational Medicine",
+false
+],
+[
+"S4210206319",
+"APL Bioengineering",
+false
+],
+[
+"S151564723",
+"Biotechnology and Bioengineering",
+true
+],
+[
+"S160877137",
+"Biotechnology Advances",
+true
+],
+[
+"S4210179121",
+"Bioengineering",
+true
+],
+[
+"S2898133657",
+"Current Opinion in Biomedical Engineering",
+false
+],
+[
+"S2736947229",
+"npj Regenerative Medicine",
+false
+],
+[
+"S197468583",
+"Journal of Tissue Engineering",
+false
+],
+[
+"S83853393",
+"International Journal of Biological Macromolecules",
+true
+],
+[
+"S2765038284",
+"Advanced Materials Technologies",
+true
+]
+],
+"drop": [
+"Medical Physics",
+"Physics in Medicine and Biology",
+"Ultrasound in Medicine & Biology",
+"Journal of Magnetic Resonance Imaging",
+"ASAIO Journal",
+"Artificial Organs",
+"Journal of Artificial Organs",
+"Journal of Biomedical Informatics",
+"Artificial Intelligence in Medicine",
+"Expert Review of Medical Devices",
+"IEEE Pulse",
+"Regenerative Medicine",
+"International Journal of Medical Robotics and Computer Assisted Surgery",
+"Journal of Biomaterials Science, Polymer Edition",
+"Journal of Biomaterials Applications",
+"Journal of Applied Biomechanics",
+"Biomechanics",
+"Prosthetics and Orthotics International",
+"Journal of Biomedical Materials Research Part B: Applied Biomaterials",
+"Microfluidics and Nanofluidics",
+"Journal of Medical and Biological Engineering",
+"Proceedings of the Institution of Mechanical Engineers, Part H: Journal of Engineering in Medicine"
+],
+"plan_unfiltered": [
+[
+"S4387286573",
+"Nature Reviews Bioengineering",
+false
+],
+[
+"S171268996",
+"Annual Review of Biomedical Engineering",
+false
+],
+[
+"S203619773",
+"IEEE Reviews in Biomedical Engineering",
+false
+],
+[
+"S2500736452",
+"Advanced Healthcare Materials",
+false
+],
+[
+"S2898508902",
+"Bioactive Materials",
+false
+],
+[
+"S4210219546",
+"Materials Today Bio",
+false
+],
+[
+"S19081469",
+"Tissue Engineering Part A",
+false
+],
+[
+"S13647896",
+"Tissue Engineering Part B: Reviews",
+false
+],
+[
+"S190192123",
+"Tissue Engineering Part C: Methods",
+false
+],
+[
+"S2737714521",
+"Biomaterials Research",
+false
+],
+[
+"S184573928",
+"Journal of Biomedical Materials Research Part A",
+false
+],
+[
+"S2494179437",
+"Biomaterials Science",
+false
+],
+[
+"S2735234564",
+"Regenerative Biomaterials",
+false
+],
+[
+"S4210187999",
+"Journal of Biomechanical Engineering",
+false
+],
+[
+"S72888871",
+"Computer Methods in Biomechanics and Biomedical Engineering",
+false
+],
+[
+"S177373469",
+"International Journal for Numerical Methods in Biomedical Engineering",
+false
+],
+[
+"S52939411",
+"Medical Engineering & Physics",
+false
+],
+[
+"S100249163",
+"Journal of the Mechanical Behavior of Biomedical Materials",
+false
+],
+[
+"S198823948",
+"Computerized Medical Imaging and Graphics",
+false
+],
+[
+"S2765007747",
+"Journal of Medical Imaging",
+false
+],
+[
+"S4210231342",
+"IEEE Transactions on Radiation and Plasma Medical Sciences",
+false
+],
+[
+"S111160002",
+"Magnetic Resonance in Medicine",
+false
+],
+[
+"S45012897",
+"NMR in Biomedicine",
+false
+],
+[
+"S2898295080",
+"Photoacoustics",
+false
+],
+[
+"S80299757",
+"IEEE Transactions on Biomedical Circuits and Systems",
+false
+],
+[
+"S3164724",
+"Physiological Measurement",
+false
+],
+[
+"S162176842",
+"BioMedical Engineering OnLine",
+false
+],
+[
+"S2299478",
+"Journal of NeuroEngineering and Rehabilitation",
+false
+],
+[
+"S46300952",
+"Medical & Biological Engineering & Computing",
+false
+],
+[
+"S4210230830",
+"Journal of Rehabilitation and Assistive Technologies Engineering",
+false
+],
+[
+"S4210209220",
+"Cyborg and Bionic Systems",
+false
+],
+[
+"S5407047401",
+"Cell Biomaterials",
+false
+],
+[
+"S4210212656",
+"Bioengineering & Translational Medicine",
+false
+],
+[
+"S4210206319",
+"APL Bioengineering",
+false
+],
+[
+"S2898133657",
+"Current Opinion in Biomedical Engineering",
+false
+],
+[
+"S2736947229",
+"npj Regenerative Medicine",
+false
+],
+[
+"S197468583",
+"Journal of Tissue Engineering",
+false
+]
+],
+"plan_extra": [
+[
+"S151470649",
+"International Journal of Medical Robotics and Computer Assisted Surgery",
+false
+],
+[
+"S1900417",
+"Expert Review of Medical Devices",
+false
+],
+[
+"S39385048",
+"IEEE Pulse",
+false
+],
+[
+"S64825020",
+"Journal of Artificial Organs",
+false
+],
+[
+"S40391745",
+"Artificial Organs",
+false
+],
+[
+"S8999885",
+"ASAIO Journal",
+false
+],
+[
+"S109113098",
+"Ultrasound in Medicine & Biology",
+false
+],
+[
+"S19745436",
+"Journal of Applied Biomechanics",
+false
+],
+[
+"S4210192194",
+"Proceedings of the Institution of Mechanical Engineers, Part H: Journal of Engineering in Medicine",
+false
+]
+]
+}
